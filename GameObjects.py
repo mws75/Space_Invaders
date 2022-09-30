@@ -75,6 +75,7 @@ class Player(Ship):
         self.laser_img = YELLOW_LASER
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = health
+        self.score = 0
 
     
     def move_lasers(self, velocity, objs):
@@ -87,6 +88,7 @@ class Player(Ship):
                 for obj in objs: 
                     if laser.collision(obj):
                         objs.remove(obj)
+                        self.score += 10
                         self.lasers.remove(laser)        
 
     def draw(self, window):

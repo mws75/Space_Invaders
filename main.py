@@ -1,13 +1,11 @@
-from distutils.command.bdist_msi import PyDialog
-from numpy import true_divide
+
 import pygame
 import os
 import time
 import random 
 from GameObjects import Enemy, Player, WINDOW, WIDTH, HEIGHT, collide
 
-#TODO Increase Frequency of shooting depending on the level. 
-#TODO Keep Track of score 
+
 #TODO write score to json  
 #TODO Display top scores 
 #TODO Add Missiles 
@@ -23,8 +21,9 @@ def main():
     FPS = 60
     level = 0
     lives = 5    
-    main_fonts = pygame.font.SysFont("arial", 45)
-    lost_fonts = pygame.font.SysFont("Helvetica", 60)
+    
+    main_font = pygame.font.SysFont("arial", 45)
+    lost_font = pygame.font.SysFont("Helvetica", 50)
 
     enemies = []
     wave_length = 5
@@ -43,22 +42,20 @@ def main():
         WINDOW.blit(GAME_BACKGROUND, (0,0))
         # draw text 
         # turn text into a surface and then put it on the screen. 
-        lives_label = main_fonts.render(f"Lives: {lives }", 1, (255, 51, 204))
-        levels_label = main_fonts.render(f"Level: {level}", 1, (0, 153, 255))
+        lives_label = main_font.render(f"Lives: {lives }", 1, (255, 51, 204))
+        levels_label = main_font.render(f"Level: {level}", 1, (0, 153, 255))
+        player_score_label = main_font.render(f"Score: {player.score}", 1, (0, 153, 255))
 
         WINDOW.blit(lives_label, (10, 10))
         WINDOW.blit(levels_label, (WIDTH - levels_label.get_width() - 10, 10))
+        WINDOW.blit(player_score_label, (10, lives_label.get_height() + 10))
         
         for enemy in enemies: 
             enemy.draw(WINDOW)
 
         player.draw(WINDOW)
-
-        if lost: 
-            lost_label = lost_fonts.render("you Lost!", 1, (255, 255, 255))
-            WINDOW.blit(lost_label, (WIDTH / 2 - lost_label.get_width() / 2, 350))
-
         pygame.display.update()
+                        
         
     while run: 
         clock.tick(FPS)
@@ -66,14 +63,18 @@ def main():
         if lives <= 0 or player.health < 0: 
             lost = True 
             lost_count += 1
+            lost_label = lost_font.render(f"You Lost!! Score: {player.score}", 1, (255,255,255))
+            WINDOW.blit(lost_label, (WIDTH/2 - lost_label.get_width()/2, 350))
+            pygame.display.update()
+            
 
         if lost: 
             if lost_count > FPS * 3: 
                 run = False 
             else: 
                 continue
-
         
+        # generate Enemies when all enemies are destroyed. 
         if(len(enemies) == 0): 
             level += 1
             wave_length += 5
