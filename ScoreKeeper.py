@@ -1,11 +1,11 @@
 import json
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 
 class Score_Keeper:
     def __init__(self) -> None:
         pass
 
-    def WriteToScoreCard(self, user_score):
+    def write_to_score_card(self, user_score):
         json_user_score = {"score": user_score}
 
         with open("scores.json", "r+") as file:
@@ -14,7 +14,7 @@ class Score_Keeper:
             file.seek(0)
             json.dump(file_data, file, indent=4)
 
-    def Get_Top_Score(self):
+    def get_top_score(self):
         top_score = 0
         
         with open("scores.json", "r") as file: 
@@ -22,15 +22,16 @@ class Score_Keeper:
             
             df = json_normalize(file_data['scores'])
 
-            df = df.sort_values(['score'])
-            print(df)
+            df = df.sort_values(['score'])            
+            df_last_record = df.tail(1)
+            top_score = df_last_record.iloc[0]['score']
         return top_score
 
             
         
 def main(): 
     sk = Score_Keeper()
-    top_score = sk.Get_Top_Score()
+    top_score = sk.get_top_score()
     print(top_score)        
 
 main() 

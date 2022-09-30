@@ -4,6 +4,7 @@ import os
 import time
 import random 
 from GameObjects import Enemy, Player, WINDOW, WIDTH, HEIGHT, collide
+from ScoreKeeper import Score_Keeper
 
 
 #TODO write score to json  
@@ -21,6 +22,7 @@ def main():
     FPS = 60
     level = 0
     lives = 5    
+    top_score = 0
     
     main_font = pygame.font.SysFont("arial", 45)
     lost_font = pygame.font.SysFont("Helvetica", 50)
@@ -63,7 +65,15 @@ def main():
         if lives <= 0 or player.health < 0: 
             lost = True 
             lost_count += 1
-            lost_label = lost_font.render(f"You Lost!! Score: {player.score}", 1, (255,255,255))
+            
+            score_recorded = False             
+            if score_recorded == False :
+                score_keeper = Score_Keeper()
+                score_keeper.write_to_score_card(player.score)
+                top_score = score_keeper.get_top_score()
+                score_recorded = True
+
+            lost_label = lost_font.render(f"You Lost!! Score: {player.score}.  Top Score: {top_score}", 1, (255,255,255))
             WINDOW.blit(lost_label, (WIDTH/2 - lost_label.get_width()/2, 350))
             pygame.display.update()
             
