@@ -80,6 +80,7 @@ class Player(Ship):
     
     def move_lasers(self, velocity, objs):
         self.cooldown()
+        collision_cordinates = []
         for laser in self.lasers: 
             laser.move(velocity)
             if laser.off_screen(HEIGHT): 
@@ -87,9 +88,13 @@ class Player(Ship):
             else: 
                 for obj in objs: 
                     if laser.collision(obj):
+                        collision_cordinates = [obj.x, obj.y]
                         objs.remove(obj)
                         self.score += 10
-                        self.lasers.remove(laser)        
+                        self.lasers.remove(laser)   
+                        collision = True
+        return collision_cordinates
+             
 
     def draw(self, window):
         super().draw(window)

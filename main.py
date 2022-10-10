@@ -5,6 +5,7 @@ import time
 import random 
 from GameObjects import Enemy, Player, WINDOW, WIDTH, HEIGHT, collide
 from ScoreKeeper import Score_Keeper
+from Explosion.Explosion_GameObjects import Explosion
 
 
 #TODO write score to json  
@@ -28,6 +29,7 @@ def main():
     lost_font = pygame.font.SysFont("Helvetica", 50)
 
     enemies = []
+    explosions = []
     wave_length = 5
     enemy_velocity = 1
 
@@ -54,6 +56,9 @@ def main():
         
         for enemy in enemies: 
             enemy.draw(WINDOW)
+
+        for explosion in explosions:
+            explosion.draw(WINDOW)
 
         player.draw(WINDOW)
         pygame.display.update()
@@ -121,11 +126,23 @@ def main():
                 player.health -= 10
                 enemies.remove(enemy)
             elif enemy.y + enemy.get_height() > HEIGHT: 
-                lives -= 1
+                lives -= 1 
                 enemies.remove(enemy)
                 
 
-        player.move_lasers(-laser_velocity, enemies)
+        collision_cordinates = player.move_lasers(-laser_velocity, enemies)
+        if len(collision_cordinates) > 0:
+            explosion = Explosion(collision_cordinates[0], collision_cordinates[1], (255,255,255))
+            explosions.append(explosion)
+        
+        explosions_to_remove = []
+        for explosion in explosions:
+            explosion.move(WIDTH, HEIGHT)
+            if explosion.exploded and len(explosion.projectiles) ==  0:
+                explosions_to_remove.append(explosion)
+
+        for explosion in explosions_to_remove:
+            explosions.remove(explosion)
 
         redraw_window()
         

@@ -51,27 +51,23 @@ class Projectile:
 
 
 
-class Firework: 
+class Explosion: 
     RADIUS = 10 
     MAX_PROJECTILES = 50
     MIN_PROJECTILES = 25
     PROJECTILE_VEL = 4
 
 
-    def __init__(self, x, y, y_velocity, explode_height, color):
+    def __init__(self, x, y, color):
         self.x = x
         self.y = y
-        self.y_velocity = y_velocity
-        self.explode_height = explode_height
         self.color = color
         self.projectiles = []
         self.exploded = False 
     
     def move(self, max_width, max_height):
         if not self.exploded:
-            self.y += self.y_velocity
-            if self.y <= self.explode_height:
-                self.explode()
+            self.explode()
 
         projectile_to_remove = []
         for projectile in self.projectiles:
