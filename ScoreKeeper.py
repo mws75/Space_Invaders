@@ -1,6 +1,8 @@
 import json
 from pandas import json_normalize
 
+json_file_path = "./assets/json/scores.json"
+
 class Score_Keeper:
     def __init__(self) -> None:
         pass
@@ -8,7 +10,7 @@ class Score_Keeper:
     def write_to_score_card(self, user_score):
         json_user_score = {"score": user_score}
 
-        with open("scores.json", "r+") as file:
+        with open(json_file_path, "r+") as file:
             file_data = json.load(file)
             file_data["scores"].append(json_user_score)
             file.seek(0)
@@ -17,7 +19,7 @@ class Score_Keeper:
     def get_top_score(self):
         top_score = 0
         
-        with open("scores.json", "r") as file: 
+        with open(json_file_path, "r") as file: 
             file_data = json.load(file)
             
             df = json_normalize(file_data['scores'])

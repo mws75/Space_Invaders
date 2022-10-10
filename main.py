@@ -15,7 +15,7 @@ from ScoreKeeper import Score_Keeper
 pygame.font.init()
 pygame.display.set_caption("Space Shooter Game")
 
-GAME_BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("assets", "background-black.png")), (WIDTH, HEIGHT))
+GAME_BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("assets/img", "background-black.png")), (WIDTH, HEIGHT))
 
 def main(): 
     run = True
