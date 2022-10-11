@@ -3,13 +3,11 @@ import pygame
 import os
 import time
 import random 
-from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide
+from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack
 from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
 
 
-#TODO write score to json  
-#TODO Display top scores 
 #TODO Add Missiles 
 
 #initiating the font class for pygame
@@ -26,10 +24,11 @@ def main():
     top_score = 0
     
     main_font = pygame.font.SysFont("arial", 45)
-    lost_font = pygame.font.SysFont("Helvetica", 50)
+    lost_font = pygame.font.SysFont("Helvetica", 35)
 
     enemies = []
     explosions = []
+    health_packs = []
     wave_length = 5
     enemy_velocity = 1
 
@@ -41,6 +40,8 @@ def main():
     clock = pygame.time.Clock()
     lost = False 
     lost_count = 0
+    health_refresh_time = FPS * 2
+    health_pack_time_limit = FPS * 3    
 
     def redraw_window():
         WINDOW.blit(GAME_BACKGROUND, (0,0))
@@ -49,16 +50,21 @@ def main():
         lives_label = main_font.render(f"Lives: {lives }", 1, (255, 51, 204))
         levels_label = main_font.render(f"Level: {level}", 1, (0, 153, 255))
         player_score_label = main_font.render(f"Score: {player.score}", 1, (0, 153, 255))
+        player_health = main_font.render(f"Health: {player.health}", 1, (0, 153, 255))
 
         WINDOW.blit(lives_label, (10, 10))
         WINDOW.blit(levels_label, (WIDTH - levels_label.get_width() - 10, 10))
         WINDOW.blit(player_score_label, (10, lives_label.get_height() + 10))
+        WINDOW.blit(player_health, (10, lives_label.get_height() + player_score_label.get_height() + 10))
         
         for enemy in enemies: 
             enemy.draw(WINDOW)
 
         for explosion in explosions:
             explosion.draw(WINDOW)
+        
+        for health_pack in health_packs:
+            health_pack.draw(WINDOW)
 
         player.draw(WINDOW)
         pygame.display.update()
@@ -96,6 +102,28 @@ def main():
             for i in range(wave_length):
                 enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100), random.choice(["teal", "orange", "purple", "pink"]))
                 enemies.append(enemy)
+            
+        # generate health pack         
+        if health_refresh_time == 0: # and Level == 2
+            health_pack_time_limit = FPS * 3         
+            health_refresh_time = (FPS * random.randint(5, 10))
+            
+            if len(health_packs) == 0:       
+                health_pack = Health_Pack((random.randint(50, WIDTH - 50)), (random.randint(HEIGHT - 400, HEIGHT - 20)))
+                health_packs.append(health_pack)            
+        else:            
+            health_pack_time_limit -= 1
+            health_refresh_time -= 1
+
+        if health_pack_time_limit == 0 and len(health_packs) > 0: 
+            health_packs.remove(health_pack)
+
+        for health_pack in health_packs:
+            if collide(health_pack, player) and player.health < player.max_health:                
+                player.health += 10    
+                health_packs.remove(health_pack)
+        
+
 
         # check for events 
         for event in pygame.event.get():
@@ -125,11 +153,6 @@ def main():
         if keys[pygame.K_SPACE]: # shoot 
             player.shoot()
 
-
-
-        
-
-
         for enemy in enemies[:]: 
             enemy.move(enemy_velocity)
             enemy.move_lasers(laser_velocity, player)
@@ -145,6 +168,7 @@ def main():
                 enemies.remove(enemy)
                 
 
+        # explosions
         collision_cordinates = player.move_lasers(-laser_velocity, enemies)
         if len(collision_cordinates) > 0:
             explosion = Explosion(collision_cordinates[0], collision_cordinates[1], (255,255,255))
