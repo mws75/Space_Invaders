@@ -3,7 +3,7 @@ import pygame
 import os
 import time
 import random 
-from GameObjects import Enemy, Player, WINDOW, WIDTH, HEIGHT, collide
+from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide
 from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
 
@@ -94,25 +94,40 @@ def main():
             level += 1
             wave_length += 5
             for i in range(wave_length):
-                enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100), random.choice(["red", "blue", "green"]))
+                enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100), random.choice(["teal", "orange", "purple", "pink"]))
                 enemies.append(enemy)
 
         # check for events 
         for event in pygame.event.get():
+            # key up events
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a: 
+                    player.ship_img =  PLAYER_SHIP
+                if event.key == pygame.K_d:
+                    player.ship_img =  PLAYER_SHIP
+            # quit events
             if event.type == pygame.QUIT: 
                 run = False
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]  and player.x - play_velocity > 0: #left 
             player.x -= play_velocity
+            player.ship_img = PLAYER_SHIP_LEFT
         if keys[pygame.K_d] and player.x + play_velocity + player.get_width() < WIDTH : #right
             player.x += play_velocity
+            player.ship_img = PLAYER_SHIP_RIGHT
         if keys[pygame.K_w] and player.y - play_velocity > 300: #up
             player.y -= play_velocity 
+            player.ship_img = PLAYER_SHIP
         if keys[pygame.K_s] and player.y + play_velocity  + player.get_height() + 15 < HEIGHT: #down
             player.y += play_velocity
+            player.ship_img = PLAYER_SHIP
         if keys[pygame.K_SPACE]: # shoot 
-             player.shoot()
+            player.shoot()
+
+
+
+        
 
 
         for enemy in enemies[:]: 

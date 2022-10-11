@@ -7,6 +7,14 @@ RED_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_red_sm
 BLUE_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_blue_small.png"))
 GREEN_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_green_small.png"))
 YELLOW_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_yellow.png"))
+PINK_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_pink.png"))
+PURPLE_SPACE_SHIP  = pygame.image.load(os.path.join("assets/img", "pixel_ship_purple.png"))
+TEAL_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_teal.png"))
+ORANGE_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_orange.png"))
+PLAYER_SHIP = pygame.image.load(os.path.join("assets/img", "player_ship.png"))
+PLAYER_SHIP_RIGHT = pygame.image.load(os.path.join("assets/img", "player_ship_right_turn.png"))
+PLAYER_SHIP_LEFT = pygame.image.load(os.path.join("assets/img", "player_ship_left_turn.png"))
+
 
 RED_LASER = pygame.image.load(os.path.join("assets/img", "pixel_laser_red.png"))
 BLUE_LASER = pygame.image.load(os.path.join("assets/img", "pixel_laser_blue.png"))
@@ -71,7 +79,7 @@ class Ship:
 class Player(Ship):
     def __init__(self, x, y, health=100):
         super().__init__(x, y, health)
-        self.ship_img = YELLOW_SPACE_SHIP
+        self.ship_img = PLAYER_SHIP
         self.laser_img = YELLOW_LASER
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = health
@@ -111,7 +119,11 @@ class Enemy(Ship):
     COLOR_MAP = {
         "red" : (RED_SPACE_SHIP, RED_LASER, 50),
         "green" : (GREEN_SPACE_SHIP, GREEN_LASER, 100),
-        "blue" : (BLUE_SPACE_SHIP, BLUE_LASER, 150)
+        "blue" : (BLUE_SPACE_SHIP, BLUE_LASER, 150),
+        "pink" : (PINK_SPACE_SHIP, BLUE_LASER, 200),
+        "purple" : (PURPLE_SPACE_SHIP, RED_LASER, 200),
+        "orange" : (ORANGE_SPACE_SHIP, RED_LASER, 200),
+        "teal" : (TEAL_SPACE_SHIP, BLUE_LASER, 200)
     }
 
 
