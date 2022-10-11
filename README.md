@@ -5,3 +5,5 @@ A fun exploration of PyGames. Just run the main.py file in a python command term
 
 Pixel Ships Info
     Resolution: 4x - 48x48 pixels
+
+Pixel Images - https://www.piskelapp.com/p/create/sprite
