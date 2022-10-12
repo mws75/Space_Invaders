@@ -3,19 +3,26 @@ import pygame
 import os
 import time
 import random 
-from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun
+from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun, Speed_Boost
 from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
 
 
 #TODO Add Missiles 
-#TODO use the Health Pack as a framework for adding the rapid missiles. 
+#TODO Add Speed Boost 
+#TODO collect new ships 
+
 
 #initiating the font class for pygame
 pygame.font.init()
 pygame.display.set_caption("Space Shooter Game")
 
 GAME_BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("assets/img", "background-black.png")), (WIDTH, HEIGHT))
+
+HEIGHT_MAX = HEIGHT - 60
+HEIGHT_MIN = HEIGHT - 400
+WIDTH_MAX  = WIDTH - 50
+WIDTH_MIN  = 50 
 
 def main(): 
     run = True
@@ -31,6 +38,8 @@ def main():
     explosions = []
     health_packs = []
     rapid_guns = []
+    speed_boosts = [] 
+
     wave_length = 5
     enemy_velocity = 1
 
@@ -42,11 +51,14 @@ def main():
     clock = pygame.time.Clock()
     lost = False 
     lost_count = 0
+
     health_refresh_time = FPS * 2
     health_pack_time_limit = FPS * 3    
     rapid_gun_refresh_time = FPS * 10
     rapid_gun_time_limit = FPS * 3
     special_weapon_time = FPS * 10
+    speed_boost_refresh_time =FPS * 10
+    speed_boost_time_limit = FPS * 3
 
     def redraw_window():
         WINDOW.blit(GAME_BACKGROUND, (0,0))
@@ -73,6 +85,9 @@ def main():
 
         for rapid_gun in rapid_guns:
             rapid_gun.draw(WINDOW)
+        
+        for speed_boost in speed_boosts: 
+            speed_boost.draw(WINDOW)
 
         player.draw(WINDOW)
         pygame.display.update()
@@ -117,7 +132,7 @@ def main():
             health_refresh_time = (FPS * random.randint(5, 10))
             
             if len(health_packs) == 0:       
-                health_pack = Health_Pack((random.randint(50, WIDTH - 50)), (random.randint(HEIGHT - 400, HEIGHT - 20)))
+                health_pack = Health_Pack((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
                 health_packs.append(health_pack)            
         else:            
             health_pack_time_limit -= 1
@@ -138,7 +153,7 @@ def main():
             rapid_gun_refresh_time = (FPS * random.randint(10, 20))
 
             if len(rapid_guns) == 0: 
-                rapid_gun = Rapid_Gun((random.randint(50, WIDTH - 50)), (random.randint(HEIGHT - 400, HEIGHT - 20)))
+                rapid_gun = Rapid_Gun((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
                 rapid_guns.append(rapid_gun)
                 special_weapon_time = FPS * 10
         else: 
@@ -157,6 +172,15 @@ def main():
             if collide(rapid_gun, player): 
                 player.gun_type, player.cool_down, player.laser_img = player.GUN_TYPE["rapid_fire"]
                 rapid_guns.remove(rapid_gun)
+
+
+        # generate speed boost
+        if speed_boost_refresh_time == 0: # and level = 3
+            speed_boost_time_limit = FPS * 3
+            speed_boost_refresh_time = (FPS * random.randint(10, 20))
+
+            if len(speed_boosts) == 0: 
+                speed_boost = Speed_Boost((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
 
                                             
 

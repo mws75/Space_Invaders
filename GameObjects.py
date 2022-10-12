@@ -23,6 +23,7 @@ YELLOW_LASER = pygame.image.load(os.path.join("assets/img", "pixel_laser_yellow.
 
 HEALTH_PACK = pygame.image.load(os.path.join("assets/img", "health_pack.png"))
 RAPID_FIRE_GUN = pygame.image.load(os.path.join("assets/img", "rapid_fire_gun.png"))
+SPEED_BOOST = pygame.image.load(os.path.join("assets/img", "speed_boost.png"))
 
 WIDTH, HEIGHT = 750, 750
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -107,7 +108,7 @@ class Player(Ship):
                         collision_cordinates = [obj.x, obj.y]
                         objs.remove(obj)
                         self.score += 10
-                                                
+
                         try: 
                             self.lasers.remove(laser)   
                         except:
@@ -126,9 +127,6 @@ class Player(Ship):
         pygame.draw.rect(window, (255, 0, 0), (self.x, self.y + self.ship_img.get_height() + 10, self.ship_img.get_width(), 10))
         pygame.draw.rect(window, (0, 255, 0), (self.x, self.y + self.ship_img.get_height() + 10, self.ship_img.get_width() * (self.health / self.max_health), 10))
             
-
-
-
 class Enemy(Ship):
     COLOR_MAP = {
         "red" : (RED_SPACE_SHIP, RED_LASER, 50),
@@ -197,7 +195,12 @@ class Rapid_Gun:
     def draw(self, window):
         window.blit(self.img, (self.x, self.y))
              
-
+class Speed_Boost:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.img = SPEED_BOOST
+        self.mask = pygame.mask.from_surface(self.img)
 
 def collide(obj1, obj2):
     offset_x = obj2.x - obj1.x 

@@ -87,15 +87,10 @@ class Explosion:
 
     def explode(self):
         self.exploded = True
-        num_projectiles = random.randrange(self.MIN_PROJECTILES, self.MAX_PROJECTILES)
+        num_projectiles = random.randrange(self.MIN_PROJECTILES, self.MAX_PROJECTILES)        
+        self.create_circular_pattern(num_projectiles)
+
         
-        if random.randint(0, 1) == 0:
-            self.create_circular_pattern(num_projectiles)
-        else:
-            self.create_star_pattern()
-
-        # TWO PATTERNS, CIRCULAR AND STAR
-
     def create_circular_pattern(self, num_projectiles):
         
         # how to make a circular
