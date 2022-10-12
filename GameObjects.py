@@ -201,6 +201,10 @@ class Speed_Boost:
         self.y = y
         self.img = SPEED_BOOST
         self.mask = pygame.mask.from_surface(self.img)
+        self.velocity = 10
+
+    def draw(self, window):
+        window.blit(self.img, (self.x, self.y))
 
 def collide(obj1, obj2):
     offset_x = obj2.x - obj1.x 

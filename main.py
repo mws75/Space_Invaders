@@ -9,9 +9,10 @@ from Explosion.Explosion_GameObjects import Explosion
 
 
 #TODO Add Missiles 
-#TODO Add Speed Boost 
+#TODO - Add acceration to speed boost so it isn't so jaring. 
 #TODO collect new ships 
 
+#TODO - Land on planet to create side scroller. 
 
 #initiating the font class for pygame
 pygame.font.init()
@@ -43,7 +44,9 @@ def main():
     wave_length = 5
     enemy_velocity = 1
 
-    play_velocity = 5
+    default_velocity = 5
+    speed_boost_velocity = 15
+    play_velocity = default_velocity
     player = Player(300, 650)
 
     laser_velocity = 8
@@ -52,13 +55,17 @@ def main():
     lost = False 
     lost_count = 0
 
-    health_refresh_time = FPS * 2
+    health_refresh_time = FPS * random.randint(2, 5)
     health_pack_time_limit = FPS * 3    
-    rapid_gun_refresh_time = FPS * 10
+    
+    rapid_gun_refresh_time = FPS * random.randint(5, 10)
     rapid_gun_time_limit = FPS * 3
-    special_weapon_time = FPS * 10
-    speed_boost_refresh_time =FPS * 10
+    
+    speed_boost_refresh_time =FPS * random.randint(5, 10)
     speed_boost_time_limit = FPS * 3
+
+    special_weapon_time = FPS * 10
+    special_speed_time = FPS * 10 
 
     def redraw_window():
         WINDOW.blit(GAME_BACKGROUND, (0,0))
@@ -181,6 +188,24 @@ def main():
 
             if len(speed_boosts) == 0: 
                 speed_boost = Speed_Boost((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
+                speed_boosts.append(speed_boost)
+                special_speed_time = FPS * 10  
+        else: 
+            speed_boost_refresh_time -= 1
+            speed_boost_time_limit -= 1
+
+        if speed_boost_time_limit == 0 and len(speed_boosts) > 0: 
+            speed_boosts.remove(speed_boost)
+
+        if play_velocity == speed_boost_velocity:
+            special_speed_time -= 1   
+            if special_speed_time == 0:
+                play_velocity = default_velocity
+
+        for speed_boost in speed_boosts:
+            if collide(speed_boost, player):
+                play_velocity = speed_boost_velocity
+                speed_boosts.remove(speed_boost)                 
 
                                             
 
