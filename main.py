@@ -3,12 +3,13 @@ import pygame
 import os
 import time
 import random 
-from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack
+from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun
 from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
 
 
 #TODO Add Missiles 
+#TODO use the Health Pack as a framework for adding the rapid missiles. 
 
 #initiating the font class for pygame
 pygame.font.init()
@@ -29,6 +30,7 @@ def main():
     enemies = []
     explosions = []
     health_packs = []
+    rapid_guns = []
     wave_length = 5
     enemy_velocity = 1
 
@@ -42,6 +44,9 @@ def main():
     lost_count = 0
     health_refresh_time = FPS * 2
     health_pack_time_limit = FPS * 3    
+    rapid_gun_refresh_time = FPS * 10
+    rapid_gun_time_limit = FPS * 3
+    special_weapon_time = FPS * 10
 
     def redraw_window():
         WINDOW.blit(GAME_BACKGROUND, (0,0))
@@ -65,6 +70,9 @@ def main():
         
         for health_pack in health_packs:
             health_pack.draw(WINDOW)
+
+        for rapid_gun in rapid_guns:
+            rapid_gun.draw(WINDOW)
 
         player.draw(WINDOW)
         pygame.display.update()
@@ -124,6 +132,33 @@ def main():
                 health_packs.remove(health_pack)
         
 
+        # generate rapid gun 
+        if rapid_gun_refresh_time == 0: # and level == 2 
+            rapid_gun_time_limit = FPS * 3
+            rapid_gun_refresh_time = (FPS * random.randint(10, 20))
+
+            if len(rapid_guns) == 0: 
+                rapid_gun = Rapid_Gun((random.randint(50, WIDTH - 50)), (random.randint(HEIGHT - 400, HEIGHT - 20)))
+                rapid_guns.append(rapid_gun)
+                special_weapon_time = FPS * 10
+        else: 
+            rapid_gun_time_limit -= 1                
+            rapid_gun_refresh_time -= 1
+        
+        if rapid_gun_time_limit == 0 and len(rapid_guns) > 0: 
+            rapid_guns.remove(rapid_gun)
+        
+        if player.gun_type == "rapid_fire":
+            special_weapon_time -= 1
+            if special_weapon_time == 0: 
+                player.gun_type, player.cool_down, player.laser_img = player.GUN_TYPE["default"] 
+                               
+        for rapid_gun in rapid_guns: 
+            if collide(rapid_gun, player): 
+                player.gun_type, player.cool_down, player.laser_img = player.GUN_TYPE["rapid_fire"]
+                rapid_guns.remove(rapid_gun)
+
+                                            
 
         # check for events 
         for event in pygame.event.get():
