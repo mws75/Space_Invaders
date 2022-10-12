@@ -82,14 +82,14 @@ class Ship:
 class Player(Ship):
 
     GUN_TYPE = {
-        "default": (30, YELLOW_LASER),
-        "rapid_fire": (10, RED_LASER)
+        "default": ("default", 30, YELLOW_LASER),
+        "rapid_fire": ("rapid_fire", 10, RED_LASER)
     }
 
     def __init__(self, x, y, health=100):
         super().__init__(x, y, health)
         self.ship_img = PLAYER_SHIP
-        self.cool_down, self.laser_img = self.GUN_TYPE["default"]
+        self.gun_type, self.cool_down, self.laser_img = self.GUN_TYPE["default"]
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = health
         self.score = 0
@@ -107,8 +107,14 @@ class Player(Ship):
                         collision_cordinates = [obj.x, obj.y]
                         objs.remove(obj)
                         self.score += 10
-                        self.lasers.remove(laser)   
+                                                
+                        try: 
+                            self.lasers.remove(laser)   
+                        except:
+                            pass 
+                        
                         collision = True
+
         return collision_cordinates
              
 
@@ -181,6 +187,15 @@ class Health_Pack:
         window.blit(self.img, (self.x, self.y))
 
 
+class Rapid_Gun: 
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.img = RAPID_FIRE_GUN
+        self.mask = pygame.mask.from_surface(self.img)
+
+    def draw(self, window):
+        window.blit(self.img, (self.x, self.y))
              
 
 
