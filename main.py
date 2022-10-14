@@ -45,7 +45,7 @@ def main():
     enemy_velocity = 1
 
     default_velocity = 5
-    speed_boost_velocity = 15
+    speed_boost_velocity = 10
     play_velocity = default_velocity
     player = Player(300, 650)
 
