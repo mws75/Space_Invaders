@@ -30,7 +30,7 @@ WIDTH_MIN  = 50
 
 def main(): 
     run = True
-    FPS = 60 f r
+    FPS = 60 
     level = 0
     lives = 5    
     top_score = 0
