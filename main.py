@@ -251,6 +251,7 @@ def main():
                 lives -= 1 
                 enemies.remove(enemy)
                 
+                
 
         # explosions
         collision_cordinates = player.move_lasers(-laser_velocity, enemies)
