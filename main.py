@@ -1,4 +1,5 @@
 
+from asyncio.constants import ACCEPT_RETRY_DELAY
 import pygame
 import os
 import time
@@ -6,6 +7,8 @@ import random
 from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun, Speed_Boost
 from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
+from PhysicsEngine import Movement
+import math
 
 
 #TODO Add Missiles 
@@ -27,7 +30,7 @@ WIDTH_MIN  = 50
 
 def main(): 
     run = True
-    FPS = 60
+    FPS = 60 
     level = 0
     lives = 5    
     top_score = 0
@@ -45,10 +48,15 @@ def main():
     enemy_velocity = 1
 
     default_velocity = 5
-    speed_boost_velocity = 10
-    play_velocity = default_velocity
+    accel_x = 0
+    accel_delta = 0.8
+    player_velocity = 0
+    player_max_velocity = default_velocity
     player = Player(300, 650)
 
+    # Speed Boost Data
+    speed_boost_velocity = 8
+    speed_boost_on = False
     laser_velocity = 8
 
     clock = pygame.time.Clock()
@@ -66,6 +74,8 @@ def main():
 
     special_weapon_time = FPS * 10
     special_speed_time = FPS * 10 
+
+    movement = Movement()
 
     def redraw_window():
         WINDOW.blit(GAME_BACKGROUND, (0,0))
@@ -197,14 +207,16 @@ def main():
         if speed_boost_time_limit == 0 and len(speed_boosts) > 0: 
             speed_boosts.remove(speed_boost)
 
-        if play_velocity == speed_boost_velocity:
+        if speed_boost_on == True:
             special_speed_time -= 1   
             if special_speed_time == 0:
-                play_velocity = default_velocity
+                player_max_velocity = default_velocity
+                speed_boost_on == False
 
         for speed_boost in speed_boosts:
             if collide(speed_boost, player):
-                play_velocity = speed_boost_velocity
+                player_max_velocity = speed_boost_velocity
+                speed_boost_on = True
                 speed_boosts.remove(speed_boost)                 
 
                                             
@@ -212,28 +224,57 @@ def main():
         # check for events 
         for event in pygame.event.get():
             # key up events
-            if event.type == pygame.KEYUP:
+            if event.type == pygame.KEYUP:                
+                player_velocity = 0 
+                # if player_velocity != 0: 
+                #     player_max_velocity = movement.ending_velocity(player_velocity, accel_x)
                 if event.key == pygame.K_a: 
-                    player.ship_img =  PLAYER_SHIP
+                    player.ship_img =  PLAYER_SHIP                    
                 if event.key == pygame.K_d:
                     player.ship_img =  PLAYER_SHIP
+            # key down events 
+            if event.type == pygame.KEYDOWN:                
+                # Set acceleration value 
+                if event.key == pygame.K_a or event.key == pygame.K_w:
+                    accel_x = -accel_delta
+                elif event.key == pygame.K_d or event.key == pygame.K_s:
+                    accel_x = accel_delta
             # quit events
             if event.type == pygame.QUIT: 
                 run = False
 
+            
+    
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]  and player.x - play_velocity > 0: #left 
-            player.x -= play_velocity
-            player.ship_img = PLAYER_SHIP_LEFT
-        if keys[pygame.K_d] and player.x + play_velocity + player.get_width() < WIDTH : #right
-            player.x += play_velocity
-            player.ship_img = PLAYER_SHIP_RIGHT
-        if keys[pygame.K_w] and player.y - play_velocity > 300: #up
-            player.y -= play_velocity 
-            player.ship_img = PLAYER_SHIP
-        if keys[pygame.K_s] and player.y + play_velocity  + player.get_height() + 15 < HEIGHT: #down
-            player.y += play_velocity
-            player.ship_img = PLAYER_SHIP
+        # if any movement keys get pressed we need to calculate velocity
+        if keys[pygame.K_a] or keys[pygame.K_d] or keys[pygame.K_w] or keys[pygame.K_s]:
+            print(player_velocity)
+            # update the velocity
+            if abs(player_velocity + movement.ending_velocity(player_velocity, accel_x)) < player_max_velocity: 
+                # update the player_velocity
+                player_velocity = movement.ending_velocity(player_velocity, accel_x, 1)
+            else: 
+                if player_velocity + movement.ending_velocity(player_velocity, accel_x) < 0:
+                    player_velocity = player_max_velocity * -1
+                else: 
+                    player_velocity = player_max_velocity
+
+            # Right and Left Movement
+            if keys[pygame.K_a]  and player.x + player_velocity > 0: #left 
+                player.x += player_velocity
+                player.ship_img = PLAYER_SHIP_LEFT
+            if keys[pygame.K_d] and player.x + player_velocity + player.get_width() < WIDTH : #rights
+                player.x += player_velocity
+                player.ship_img = PLAYER_SHIP_RIGHT
+            
+            # Up and down Movement
+            if keys[pygame.K_w] and player.y + player_velocity > 300: #up
+                player.y += player_velocity 
+                player.ship_img = PLAYER_SHIP
+            if keys[pygame.K_s] and player.y + player_velocity  + player.get_height() + 15 < HEIGHT: #down
+                player.y += player_velocity
+                player.ship_img = PLAYER_SHIP
+        
         if keys[pygame.K_SPACE]: # shoot 
             player.shoot()
 
@@ -250,7 +291,6 @@ def main():
             elif enemy.y + enemy.get_height() > HEIGHT: 
                 lives -= 1 
                 enemies.remove(enemy)
-                
                 
 
         # explosions
