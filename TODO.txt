@@ -1,0 +1,4 @@
+TODO 
+- Score is added every second, 
+    instead of just at the end of the game. Change that 
+    to just add at the end of the game. 

@@ -34,6 +34,7 @@ def main():
     level = 0
     lives = 5    
     top_score = 0
+    score_recorded = False
     
     main_font = pygame.font.SysFont("arial", 45)
     lost_font = pygame.font.SysFont("Helvetica", 35)
@@ -117,7 +118,6 @@ def main():
             lost = True 
             lost_count += 1
             
-            score_recorded = False             
             if score_recorded == False :
                 score_keeper = Score_Keeper()
                 score_keeper.write_to_score_card(player.score)
