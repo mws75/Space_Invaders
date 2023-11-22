@@ -42,6 +42,7 @@ class Ship:
         self.ship_img = None
         self.laser_img = None 
         self.lasers = []
+        self.missiles =[] 
         self.cool_down_counter = 0
         self.cool_down = 30
 
@@ -66,7 +67,16 @@ class Ship:
             elif laser.collision(obj):
                 obj.health -= 10
                 self.lasers.remove(laser)
-
+    
+    def move_missiles(self, obj):
+        self.cool_down()
+        for missile in self.missiles:
+            missile.move(missile.velocity)
+            if missile.off_screen(HEIGHT): 
+                self.missiles.remove(missile)
+            elif missile.collision(obj):
+                obj.health -= 20
+                self.missiles.remove(missile)
 
     def cooldown(self):
         if self.cool_down_counter >= self.cool_down: 
@@ -78,6 +88,12 @@ class Ship:
         if self.cool_down_counter == 0: 
             laser = Laser(self.x, self.y, self.laser_img)
             self.lasers.append(laser)
+            self.cool_down_counter = 1
+    
+    def shoot_missile(self):
+        if self.cool_down_counter == 0: 
+            missile = Missile(self.x, self.y)
+            self.missiles.append(missile)
             self.cool_down_counter = 1
 
 
@@ -209,15 +225,15 @@ class Speed_Boost:
     def draw(self, window):
         window.blit(self.img, (self.x, self.y))
 
-class Missile:
+class Missile(Laser):
     def __init__(self, x, y):
         self.x = x
         self.y = y
         self.img = MISSILE
-        self.img = pygame.transform.scale(self.img, (self.img.get_width() // 2 , self.img.get_height() // 2))
+        self.img = pygame.transform.scale(self.img, (self.img.get_width() // 3 , self.img.get_height() // 3))
         self.mask = pygame.mask.from_surface(self.img)
         
-        self.velocity = 10
+        self.velocity = 5
     
     def draw(self, window):
         window.blit(self.img, (self.x, self.y))

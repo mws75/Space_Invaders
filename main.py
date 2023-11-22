@@ -125,6 +125,10 @@ def main():
                               
     while run: 
         clock.tick(FPS)
+        
+        if player.missile_count == 0: 
+            Player_ship = PLAYER_SHIP
+            player.ship_img = Player_ship
 
         if lives <= 0 or player.health < 0: 
             lost = True 
@@ -252,8 +256,10 @@ def main():
                 missiles.remove(missile)
             if player.missile_count == 1: 
                 Player_ship = PLAYER_SHIP_ONE_MISSILE
+                player.ship_img = Player_ship
             if player.missile_count == 2: 
                 Player_ship = PLAYER_SHIP_TWO_MISSILES
+                player.ship_img = Player_ship
 
         # check for events 
         for event in pygame.event.get():
@@ -271,6 +277,18 @@ def main():
                     accel_x = -accel_delta
                 elif event.key == pygame.K_d or event.key == pygame.K_s:
                     accel_x = accel_delta
+                elif event.key == pygame.K_r:
+                    if player.missile_count > 0:
+                        player.shoot_missile()
+                        player.missile_count -= 1
+
+                    if player.missile_count == 1: 
+                        Player_ship = PLAYER_SHIP_ONE_MISSILE
+                        player.ship_img = Player_ship
+                    elif player.missile_count == 0:
+                        Player_ship = PLAYER_SHIP
+                        player.ship_img = Player_ship
+
             # quit events
             if event.type == pygame.QUIT: 
                 run = False
@@ -309,6 +327,7 @@ def main():
         
         if keys[pygame.K_SPACE]: # shoot 
             player.shoot()
+
 
         for enemy in enemies[:]: 
             enemy.move(enemy_velocity)
