@@ -15,7 +15,6 @@ COLORS = [
     ]
 
 
-
 class Projectile: 
     WIDTH = 5
     HEIGHT = 10
@@ -47,9 +46,6 @@ class Projectile:
         pygame.draw.rect(shape_surface, color, shape_surface.get_rect())
         # blit takes one surface and puts it on another surface
         surface.blit(shape_surface, rectangle)
-
-
-
 
 class Explosion: 
     RADIUS = 10 
@@ -129,11 +125,6 @@ class Explosion:
 
         for projectile in self.projectiles: 
             projectile.draw(window)
-
-
-            
-
-
 
 
 

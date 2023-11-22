@@ -12,8 +12,11 @@ PURPLE_SPACE_SHIP  = pygame.image.load(os.path.join("assets/img", "pixel_ship_pu
 TEAL_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_teal.png"))
 ORANGE_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_orange.png"))
 PLAYER_SHIP = pygame.image.load(os.path.join("assets/img", "player_ship.png"))
+PLAYER_SHIP_ONE_MISSILE = pygame.image.load(os.path.join("assets/img", "player_ship_one_missile.png"))
+PLAYER_SHIP_TWO_MISSILES = pygame.image.load(os.path.join("assets/img", "player_ship_two_missiles.png"))
 PLAYER_SHIP_RIGHT = pygame.image.load(os.path.join("assets/img", "player_ship_right_turn.png"))
 PLAYER_SHIP_LEFT = pygame.image.load(os.path.join("assets/img", "player_ship_left_turn.png"))
+MISSILE = pygame.image.load(os.path.join("assets/img", "missile_sprite.png"))
 
 
 RED_LASER = pygame.image.load(os.path.join("assets/img", "pixel_laser_red.png"))
@@ -87,6 +90,8 @@ class Player(Ship):
         "rapid_fire": ("rapid_fire", 10, RED_LASER)
     }
 
+    MAX_MISSILE_COUNT = 2
+    
     def __init__(self, x, y, health=100):
         super().__init__(x, y, health)
         self.ship_img = PLAYER_SHIP
@@ -94,6 +99,7 @@ class Player(Ship):
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.max_health = health
         self.score = 0
+        self.missile_count = 0
 
     def move_lasers(self, velocity, objs):
         self.cooldown()
@@ -117,8 +123,8 @@ class Player(Ship):
                         collision = True
 
         return collision_cordinates
+ 
              
-
     def draw(self, window):
         super().draw(window)
         self.healthbar(window)
@@ -153,7 +159,6 @@ class Enemy(Ship):
             self.lasers.append(laser)
             self.cool_down_counter = 1
 
-
 class Laser: 
     def __init__(self, x, y, img):
         self.x = x 
@@ -173,7 +178,6 @@ class Laser:
     def collision(self, obj):
         return collide(self, obj)
 
-
 class Health_Pack:
     def __init__(self, x, y):
         self.x = x
@@ -183,7 +187,6 @@ class Health_Pack:
 
     def draw(self, window):
         window.blit(self.img, (self.x, self.y))
-
 
 class Rapid_Gun: 
     def __init__(self, x, y):
@@ -203,6 +206,19 @@ class Speed_Boost:
         self.mask = pygame.mask.from_surface(self.img)
         self.velocity = 10
 
+    def draw(self, window):
+        window.blit(self.img, (self.x, self.y))
+
+class Missile:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.img = MISSILE
+        self.img = pygame.transform.scale(self.img, (self.img.get_width() // 2 , self.img.get_height() // 2))
+        self.mask = pygame.mask.from_surface(self.img)
+        
+        self.velocity = 10
+    
     def draw(self, window):
         window.blit(self.img, (self.x, self.y))
 

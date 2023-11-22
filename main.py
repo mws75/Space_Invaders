@@ -4,7 +4,7 @@ import pygame
 import os
 import time
 import random 
-from GameObjects import PLAYER_SHIP, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun, Speed_Boost
+from GameObjects import PLAYER_SHIP, PLAYER_SHIP_ONE_MISSILE, PLAYER_SHIP_TWO_MISSILES, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun, Speed_Boost, Missile
 from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
 from PhysicsEngine import Movement
@@ -44,6 +44,7 @@ def main():
     health_packs = []
     rapid_guns = []
     speed_boosts = [] 
+    missiles = []
 
     wave_length = 5
     enemy_velocity = 1
@@ -54,6 +55,8 @@ def main():
     player_velocity = 0
     player_max_velocity = default_velocity
     player = Player(300, 650)
+
+    Player_ship = PLAYER_SHIP
 
     # Speed Boost Data
     speed_boost_velocity = 8
@@ -73,6 +76,9 @@ def main():
     speed_boost_refresh_time =FPS * random.randint(5, 10)
     speed_boost_time_limit = FPS * 3
 
+    missile_refresh_time = FPS * random.randint(1, 2)
+    missile_time_limit = FPS * 1
+
     special_weapon_time = FPS * 10
     special_speed_time = FPS * 10 
 
@@ -84,14 +90,18 @@ def main():
         # turn text into a surface and then put it on the screen. 
         lives_label = main_font.render(f"Lives: {lives }", 1, (255, 51, 204))
         levels_label = main_font.render(f"Level: {level}", 1, (0, 153, 255))
+
         player_score_label = main_font.render(f"Score: {player.score}", 1, (0, 153, 255))
         player_health = main_font.render(f"Health: {player.health}", 1, (0, 153, 255))
+        missile_label = main_font.render(f"Missiles: {player.missile_count}", 1, (0, 153, 255))
+
 
         WINDOW.blit(lives_label, (10, 10))
         WINDOW.blit(levels_label, (WIDTH - levels_label.get_width() - 10, 10))
         WINDOW.blit(player_score_label, (10, lives_label.get_height() + 10))
         WINDOW.blit(player_health, (10, lives_label.get_height() + player_score_label.get_height() + 10))
-        
+        WINDOW.blit(missile_label, (10, lives_label.get_height() + player_score_label.get_height() + player_health.get_height() + 10))
+
         for enemy in enemies: 
             enemy.draw(WINDOW)
 
@@ -107,10 +117,12 @@ def main():
         for speed_boost in speed_boosts: 
             speed_boost.draw(WINDOW)
 
+        for missile in missiles:
+            missile.draw(WINDOW)
+
         player.draw(WINDOW)
         pygame.display.update()
-                        
-        
+                              
     while run: 
         clock.tick(FPS)
 
@@ -143,7 +155,7 @@ def main():
                 enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100), random.choice(["teal", "orange", "purple", "pink"]))
                 enemies.append(enemy)
             
-        # generate health pack         
+        ### generate health pack   ###      
         if health_refresh_time == 0: # and Level == 2
             health_pack_time_limit = FPS * 3         
             health_refresh_time = (FPS * random.randint(5, 10))
@@ -219,19 +231,39 @@ def main():
                 speed_boost_on = True
                 speed_boosts.remove(speed_boost)                 
 
-                                            
+        # generate missile 
+        if missile_refresh_time == 0:
+            missile_time_limit = FPS * 3
+            missile_refresh_time = (FPS * random.randint(3,5))
+
+            if len(missiles) == 0:
+                missile = Missile((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
+                missiles.append(missile)
+        else:
+            missile_refresh_time -= 1
+            missile_time_limit -= 1
+        
+        if missile_time_limit == 0 and len(missiles) > 0:
+            missiles.remove(missile)
+        
+        for missile in missiles:
+            if collide(missile, player) and player.missile_count < 2:
+                player.missile_count += 1
+                missiles.remove(missile)
+            if player.missile_count == 1: 
+                Player_ship = PLAYER_SHIP_ONE_MISSILE
+            if player.missile_count == 2: 
+                Player_ship = PLAYER_SHIP_TWO_MISSILES
 
         # check for events 
         for event in pygame.event.get():
             # key up events
             if event.type == pygame.KEYUP:                
                 player_velocity = 0 
-                # if player_velocity != 0: 
-                #     player_max_velocity = movement.ending_velocity(player_velocity, accel_x)
                 if event.key == pygame.K_a: 
-                    player.ship_img =  PLAYER_SHIP                    
+                    player.ship_img =  Player_ship                    
                 if event.key == pygame.K_d:
-                    player.ship_img =  PLAYER_SHIP
+                    player.ship_img =  Player_ship
             # key down events 
             if event.type == pygame.KEYDOWN:                
                 # Set acceleration value 
@@ -248,7 +280,7 @@ def main():
         keys = pygame.key.get_pressed()
         # if any movement keys get pressed we need to calculate velocity
         if keys[pygame.K_a] or keys[pygame.K_d] or keys[pygame.K_w] or keys[pygame.K_s]:
-            print(player_velocity)
+            
             # update the velocity
             if abs(player_velocity + movement.ending_velocity(player_velocity, accel_x)) < player_max_velocity: 
                 # update the player_velocity
@@ -270,10 +302,10 @@ def main():
             # Up and down Movement
             if keys[pygame.K_w] and player.y + player_velocity > 300: #up
                 player.y += player_velocity 
-                player.ship_img = PLAYER_SHIP
+                player.ship_img = Player_ship
             if keys[pygame.K_s] and player.y + player_velocity  + player.get_height() + 15 < HEIGHT: #down
                 player.y += player_velocity
-                player.ship_img = PLAYER_SHIP
+                player.ship_img = Player_ship
         
         if keys[pygame.K_SPACE]: # shoot 
             player.shoot()
@@ -309,6 +341,7 @@ def main():
             explosions.remove(explosion)
 
         redraw_window()
+        print(player.missile_count)
         
         
 def main_menu(): 

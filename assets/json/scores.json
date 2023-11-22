@@ -1,10 +1,22 @@
 {
-  "scores": [
-    {
-      "score": 0
-    },
-    {
-      "score": 30
-    }
-  ]
+    "scores": [
+        {
+            "score": 0
+        },
+        {
+            "score": 30
+        },
+        {
+            "score": 80
+        },
+        {
+            "score": 30
+        },
+        {
+            "score": 0
+        },
+        {
+            "score": 30
+        }
+    ]
 }
