@@ -50,6 +50,8 @@ class Ship:
         window.blit(self.ship_img, (self.x, self.y))
         for laser in self.lasers: 
             laser.draw(WINDOW)
+        for missile in self.missiles:
+            missile.draw(WINDOW)
 
     def get_width(self):
         return self.ship_img.get_width()
@@ -102,8 +104,8 @@ class Ship:
 class Player(Ship):
 
     GUN_TYPE = {
-        "default": ("default", 30, YELLOW_LASER),
-        "rapid_fire": ("rapid_fire", 10, RED_LASER)
+        "default": ("default", 45, YELLOW_LASER),
+        "rapid_fire": ("rapid_fire", 20, RED_LASER)
     }
 
     MAX_MISSILE_COUNT = 2
@@ -130,7 +132,6 @@ class Player(Ship):
                         collision_cordinates = [obj.x, obj.y]
                         objs.remove(obj)
                         self.score += 10
-
                         try: 
                             self.lasers.remove(laser)   
                         except:
@@ -139,7 +140,27 @@ class Player(Ship):
                         collision = True
 
         return collision_cordinates
- 
+    
+    def move_missiles(self, objs):
+        self.cooldown()
+        collision_cordinates = []
+        for missile in self.missiles:
+            missile.move(missile.velocity * -1) # to go up 
+            if missile.off_screen(HEIGHT) and len(self.missiles) > 0:
+                self.missiles.remove(missile)
+            else:
+                for obj in objs:
+                    if missile.collision(obj) and len(self.missiles) > 0:
+                        collision_cordinates = [obj.x, obj.y]
+                        objs.remove(obj)
+                        self.score += 10
+                        try: 
+                            self.missiles.remove(missile)   
+                        except:
+                            pass 
+                        
+                        collision = True
+        return collision_cordinates
              
     def draw(self, window):
         super().draw(window)
@@ -235,6 +256,8 @@ class Missile(Laser):
         
         self.velocity = 5
     
+    # probably need a move function here. 
+
     def draw(self, window):
         window.blit(self.img, (self.x, self.y))
 

@@ -1,2 +1,2 @@
 TODO 
-- Missiles - shooting missiles is funky. 
+- Missiles - they are invisible. 

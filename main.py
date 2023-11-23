@@ -61,8 +61,8 @@ def main():
     # Speed Boost Data
     speed_boost_velocity = 8
     speed_boost_on = False
-    laser_velocity = 8
-
+    laser_velocity = 5
+    
     clock = pygame.time.Clock()
     lost = False 
     lost_count = 0
@@ -277,7 +277,18 @@ def main():
                     accel_x = -accel_delta
                 elif event.key == pygame.K_d or event.key == pygame.K_s:
                     accel_x = accel_delta
+
                 elif event.key == pygame.K_r:
+                    if player.missile_count > 0:
+                        player.shoot_missile()
+                        player.missile_count -= 1
+
+                    if player.missile_count == 1: 
+                        Player_ship = PLAYER_SHIP_ONE_MISSILE
+                        player.ship_img = Player_ship
+                    elif player.missile_count == 0:
+                        Player_ship = PLAYER_SHIP
+                        player.ship_img = Player_ship
                     if player.missile_count > 0:
                         player.shoot_missile()
                         player.missile_count -= 1
@@ -346,9 +357,14 @@ def main():
 
         # explosions
         collision_cordinates = player.move_lasers(-laser_velocity, enemies)
+        missile_collision_cordinates = player.move_missiles(enemies)
         if len(collision_cordinates) > 0:
             explosion = Explosion(collision_cordinates[0], collision_cordinates[1], (255,255,255))
             explosions.append(explosion)
+
+        if len(missile_collision_cordinates) > 0:
+            explosion = Explosion(missile_collision_cordinates[0], missile_collision_cordinates[1], (255,255,255))
+            explosions.append(explosion)    
         
         explosions_to_remove = []
         for explosion in explosions:
