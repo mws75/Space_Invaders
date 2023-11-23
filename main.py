@@ -4,7 +4,12 @@ import pygame
 import os
 import time
 import random 
-from GameObjects import PLAYER_SHIP, PLAYER_SHIP_ONE_MISSILE, PLAYER_SHIP_TWO_MISSILES, PLAYER_SHIP_LEFT, PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun, Speed_Boost, Missile
+from GameObjects import (PLAYER_SHIP, PLAYER_SHIP_ONE_MISSILE, 
+                         PLAYER_SHIP_TWO_MISSILES, PLAYER_SHIP_LEFT, 
+                         PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, 
+                         WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun, 
+                         Speed_Boost, Missile)
+
 from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
 from PhysicsEngine import Movement
@@ -27,6 +32,55 @@ HEIGHT_MAX = HEIGHT - 60
 HEIGHT_MIN = HEIGHT - 400
 WIDTH_MAX  = WIDTH - 50
 WIDTH_MIN  = 50 
+
+def redraw_window(player, 
+                  enemies, 
+                  explosions, 
+                  health_packs, 
+                  rapid_guns, 
+                  speed_boosts,
+                  missiles, 
+                  level,
+                  lives,
+                  main_font):
+        WINDOW.blit(GAME_BACKGROUND, (0,0))
+        # draw text 
+        # turn text into a surface and then put it on the screen. 
+        lives_label = main_font.render(f"Lives: {lives }", 1, (255, 51, 204))
+        levels_label = main_font.render(f"Level: {level}", 1, (0, 153, 255))
+
+        player_score_label = main_font.render(f"Score: {player.score}", 1, (0, 153, 255))
+        player_health = main_font.render(f"Health: {player.health}", 1, (0, 153, 255))
+        missile_label = main_font.render(f"Missiles: {player.missile_count}", 1, (0, 153, 255))
+
+
+        WINDOW.blit(lives_label, (10, 10))
+        WINDOW.blit(levels_label, (WIDTH - levels_label.get_width() - 10, 10))
+        WINDOW.blit(player_score_label, (10, lives_label.get_height() + 10))
+        WINDOW.blit(player_health, (10, lives_label.get_height() + player_score_label.get_height() + 10))
+        WINDOW.blit(missile_label, (10, lives_label.get_height() + player_score_label.get_height() + player_health.get_height() + 10))
+
+        for enemy in enemies: 
+            enemy.draw(WINDOW)
+
+        for explosion in explosions:
+            explosion.draw(WINDOW)
+        
+        for health_pack in health_packs:
+            health_pack.draw(WINDOW)
+
+        for rapid_gun in rapid_guns:
+            rapid_gun.draw(WINDOW)
+        
+        for speed_boost in speed_boosts: 
+            speed_boost.draw(WINDOW)
+
+        for missile in missiles:
+            missile.draw(WINDOW)
+
+        player.draw(WINDOW)
+        pygame.display.update()
+
 
 def main(): 
     run = True
@@ -83,45 +137,6 @@ def main():
     special_speed_time = FPS * 10 
 
     movement = Movement()
-
-    def redraw_window():
-        WINDOW.blit(GAME_BACKGROUND, (0,0))
-        # draw text 
-        # turn text into a surface and then put it on the screen. 
-        lives_label = main_font.render(f"Lives: {lives }", 1, (255, 51, 204))
-        levels_label = main_font.render(f"Level: {level}", 1, (0, 153, 255))
-
-        player_score_label = main_font.render(f"Score: {player.score}", 1, (0, 153, 255))
-        player_health = main_font.render(f"Health: {player.health}", 1, (0, 153, 255))
-        missile_label = main_font.render(f"Missiles: {player.missile_count}", 1, (0, 153, 255))
-
-
-        WINDOW.blit(lives_label, (10, 10))
-        WINDOW.blit(levels_label, (WIDTH - levels_label.get_width() - 10, 10))
-        WINDOW.blit(player_score_label, (10, lives_label.get_height() + 10))
-        WINDOW.blit(player_health, (10, lives_label.get_height() + player_score_label.get_height() + 10))
-        WINDOW.blit(missile_label, (10, lives_label.get_height() + player_score_label.get_height() + player_health.get_height() + 10))
-
-        for enemy in enemies: 
-            enemy.draw(WINDOW)
-
-        for explosion in explosions:
-            explosion.draw(WINDOW)
-        
-        for health_pack in health_packs:
-            health_pack.draw(WINDOW)
-
-        for rapid_gun in rapid_guns:
-            rapid_gun.draw(WINDOW)
-        
-        for speed_boost in speed_boosts: 
-            speed_boost.draw(WINDOW)
-
-        for missile in missiles:
-            missile.draw(WINDOW)
-
-        player.draw(WINDOW)
-        pygame.display.update()
                               
     while run: 
         clock.tick(FPS)
@@ -159,7 +174,7 @@ def main():
                 enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100), random.choice(["teal", "orange", "purple", "pink"]))
                 enemies.append(enemy)
             
-        ### generate health pack   ###      
+        # generate health pack       
         if health_refresh_time == 0: # and Level == 2
             health_pack_time_limit = FPS * 3         
             health_refresh_time = (FPS * random.randint(5, 10))
@@ -279,27 +294,18 @@ def main():
                     accel_x = accel_delta
 
                 elif event.key == pygame.K_r:
+                    
                     if player.missile_count > 0:
                         player.shoot_missile()
                         player.missile_count -= 1
 
-                    if player.missile_count == 1: 
-                        Player_ship = PLAYER_SHIP_ONE_MISSILE
-                        player.ship_img = Player_ship
-                    elif player.missile_count == 0:
-                        Player_ship = PLAYER_SHIP
-                        player.ship_img = Player_ship
-                    if player.missile_count > 0:
-                        player.shoot_missile()
-                        player.missile_count -= 1
-
-                    if player.missile_count == 1: 
-                        Player_ship = PLAYER_SHIP_ONE_MISSILE
-                        player.ship_img = Player_ship
-                    elif player.missile_count == 0:
-                        Player_ship = PLAYER_SHIP
-                        player.ship_img = Player_ship
-
+                        if player.missile_count == 1: 
+                            Player_ship = PLAYER_SHIP_ONE_MISSILE
+                            player.ship_img = Player_ship
+                        elif player.missile_count == 0:
+                            Player_ship = PLAYER_SHIP
+                            player.ship_img = Player_ship
+                        
             # quit events
             if event.type == pygame.QUIT: 
                 run = False
@@ -375,7 +381,10 @@ def main():
         for explosion in explosions_to_remove:
             explosions.remove(explosion)
 
-        redraw_window()
+        redraw_window(player, enemies, explosions, health_packs,
+                      rapid_guns, speed_boosts, missiles,
+                      level, lives, main_font)
+        
         print(player.missile_count)
         
         
