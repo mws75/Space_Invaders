@@ -104,7 +104,7 @@ def generate_enemies(wave_length: int, enemies: List[Enemy]) -> List[Enemy]:
     return enemies
     
 def generate_health_packs(health_packs: List[Health_Pack]) -> List[Health_Pack]:
-    health_pack = Health_Pack(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100))
+    health_pack = Health_Pack((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
     health_packs.append(health_pack)
     return health_packs
 
@@ -113,7 +113,6 @@ def main():
     FPS = 60 
     level = 0
     lives = 5    
-    top_score = 0
     score_recorded = False
     lost = False
     
@@ -203,8 +202,7 @@ def main():
             health_refresh_timer.time = (FPS * random.randint(5, 10))
             
             if len(health_packs) == 0:       
-                health_pack = Health_Pack((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
-                health_packs.append(health_pack)            
+                health_packs = generate_health_packs(health_packs)       
         else:            
             health_pack_time_limit_timer.time -= 1
             health_refresh_timer.time -= 1
