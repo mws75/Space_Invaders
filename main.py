@@ -127,6 +127,11 @@ def generate_health_pack(health_packs: List[Health_Pack],
 
     return health_packs
 
+def generate_rapid_gun(rapid_guns: List[Rapid_Gun]) -> List[Rapid_Gun]:
+    rapid_gun = Rapid_Gun((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
+    rapid_guns.append(rapid_gun)
+    return rapid_guns
+
 def main(): 
     run = True
     FPS = 60 
@@ -168,14 +173,11 @@ def main():
 
     # Health Pack Data
     health_refresh_timer = Timer(FPS * random.randint(2, 5))
-    health_refresh_time = FPS * random.randint(2, 5)
-    
     health_pack_time_limit_timer = Timer(FPS * 3)
-    health_pack_time_limit = FPS * 3    
     
     # Rapid Gun Data
-    rapid_gun_refresh_time = FPS * random.randint(5, 10)
-    rapid_gun_time_limit = FPS * 3
+    rapid_gun_refresh_timer = Timer(FPS * random.randint(5, 10))
+    rapid_gun_time_limit_timer = Timer(FPS * 3)
     
     # Speed  Boost Data 
     speed_boost_refresh_time =FPS * random.randint(5, 10)
@@ -186,7 +188,7 @@ def main():
     missile_time_limit = FPS * 1
 
     # Special Weapon Data
-    special_weapon_time = FPS * 10
+    special_weapon_timer = Timer(FPS * 10)
     special_speed_time = FPS * 10 
 
     movement = Movement()
@@ -226,24 +228,23 @@ def main():
         
 
         # generate rapid gun 
-        if rapid_gun_refresh_time == 0: # and level == 2 
-            rapid_gun_time_limit = FPS * 3
-            rapid_gun_refresh_time = (FPS * random.randint(10, 20))
+        if rapid_gun_refresh_timer.time == 0: # and level == 2 
+            rapid_gun_time_limit_timer.time = FPS * 3
+            rapid_gun_refresh_timer.time = (FPS * random.randint(10, 20))
 
             if len(rapid_guns) == 0: 
-                rapid_gun = Rapid_Gun((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
-                rapid_guns.append(rapid_gun)
-                special_weapon_time = FPS * 10
+                rapid_guns = generate_rapid_gun(rapid_guns)
+                special_weapon_timer.time = FPS * 10
         else: 
-            rapid_gun_time_limit -= 1                
-            rapid_gun_refresh_time -= 1
+            rapid_gun_time_limit_timer.time -= 1                
+            rapid_gun_refresh_timer.time -= 1
         
-        if rapid_gun_time_limit == 0 and len(rapid_guns) > 0: 
+        if rapid_gun_time_limit_timer.time == 0 and len(rapid_guns) > 0: 
             rapid_guns.remove(rapid_gun)
         
         if player.gun_type == "rapid_fire":
-            special_weapon_time -= 1
-            if special_weapon_time == 0: 
+            special_weapon_timer.time -= 1
+            if special_weapon_timer.time == 0: 
                 player.gun_type, player.cool_down, player.laser_img = player.GUN_TYPE["default"] 
                                
         for rapid_gun in rapid_guns: 
