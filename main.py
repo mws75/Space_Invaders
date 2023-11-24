@@ -81,6 +81,8 @@ def redraw_window(player,
         player.draw(WINDOW)
         pygame.display.update()
 
+def game_over():
+    pass
 
 def main(): 
     run = True
