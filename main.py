@@ -14,7 +14,7 @@ from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
 from PhysicsEngine import Movement
 import math
-
+from typing import List
 
 #TODO Add Missiles 
 #TODO - Add acceration to speed boost so it isn't so jaring. 
@@ -95,6 +95,15 @@ def game_over(lives: int, player: Player, lost: bool, score_recorded: bool, lost
         pygame.display.update()
     return lost
         
+def generate_enemies(wave_length: int, enemies: List[Enemy]) -> List[Enemy]:
+    
+    for i in range(wave_length):
+        enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100), random.choice(["teal", "orange", "purple", "pink"]))
+        enemies.append(enemy)
+    
+    return enemies
+    
+
 def main(): 
     run = True
     FPS = 60 
@@ -159,6 +168,7 @@ def main():
             Player_ship = PLAYER_SHIP
             player.ship_img = Player_ship
 
+        # game over section
         lost = game_over(lives, player, lost, score_recorded, lost_font)
         if lost: 
             score_recorded = True
@@ -172,10 +182,8 @@ def main():
         if(len(enemies) == 0): 
             level += 1
             wave_length += 5
-            for i in range(wave_length):
-                enemy = Enemy(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100), random.choice(["teal", "orange", "purple", "pink"]))
-                enemies.append(enemy)
-            
+            enemies = generate_enemies(wave_length, enemies)
+
         # generate health pack       
         if health_refresh_time == 0: # and Level == 2
             health_pack_time_limit = FPS * 3         
