@@ -261,6 +261,11 @@ class Missile(Laser):
     def draw(self, window):
         window.blit(self.img, (self.x, self.y))
 
+class Timer:
+    def __init__(self, time):
+        self.time = time
+        
+
 def collide(obj1, obj2):
     offset_x = obj2.x - obj1.x 
     offset_y = obj2.y - obj1.y

@@ -8,7 +8,7 @@ from GameObjects import (PLAYER_SHIP, PLAYER_SHIP_ONE_MISSILE,
                          PLAYER_SHIP_TWO_MISSILES, PLAYER_SHIP_LEFT, 
                          PLAYER_SHIP_RIGHT, Enemy, Player, WINDOW, 
                          WIDTH, HEIGHT, collide, Health_Pack, Rapid_Gun, 
-                         Speed_Boost, Missile)
+                         Speed_Boost, Missile, Timer)
 
 from ScoreKeeper import Score_Keeper
 from Explosion.Explosion_GameObjects import Explosion
@@ -103,6 +103,10 @@ def generate_enemies(wave_length: int, enemies: List[Enemy]) -> List[Enemy]:
     
     return enemies
     
+def generate_health_packs(health_packs: List[Health_Pack]) -> List[Health_Pack]:
+    health_pack = Health_Pack(random.randrange(50, WIDTH - 100), random.randrange(-1500, -100))
+    health_packs.append(health_pack)
+    return health_packs
 
 def main(): 
     run = True
@@ -144,18 +148,26 @@ def main():
     lost = False 
     lost_count = 0
 
+    # Health Pack Data
+    health_refresh_timer = Timer(FPS * random.randint(2, 5))
     health_refresh_time = FPS * random.randint(2, 5)
+    
+    health_pack_time_limit_timer = Timer(FPS * 3)
     health_pack_time_limit = FPS * 3    
     
+    # Rapid Gun Data
     rapid_gun_refresh_time = FPS * random.randint(5, 10)
     rapid_gun_time_limit = FPS * 3
     
+    # Speed  Boost Data 
     speed_boost_refresh_time =FPS * random.randint(5, 10)
     speed_boost_time_limit = FPS * 3
 
+    # Missile Data 
     missile_refresh_time = FPS * random.randint(1, 2)
     missile_time_limit = FPS * 1
 
+    # Special Weapon Data
     special_weapon_time = FPS * 10
     special_speed_time = FPS * 10 
 
@@ -185,18 +197,19 @@ def main():
             enemies = generate_enemies(wave_length, enemies)
 
         # generate health pack       
-        if health_refresh_time == 0: # and Level == 2
-            health_pack_time_limit = FPS * 3         
-            health_refresh_time = (FPS * random.randint(5, 10))
+        # maybe think about creating timer objects 
+        if health_refresh_timer.time == 0: # and Level == 2
+            health_pack_time_limit_timer.time = FPS * 3         
+            health_refresh_timer.time = (FPS * random.randint(5, 10))
             
             if len(health_packs) == 0:       
                 health_pack = Health_Pack((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
                 health_packs.append(health_pack)            
         else:            
-            health_pack_time_limit -= 1
-            health_refresh_time -= 1
+            health_pack_time_limit_timer.time -= 1
+            health_refresh_timer.time -= 1
 
-        if health_pack_time_limit == 0 and len(health_packs) > 0: 
+        if health_pack_time_limit_timer.time == 0 and len(health_packs) > 0: 
             health_packs.remove(health_pack)
 
         for health_pack in health_packs:
