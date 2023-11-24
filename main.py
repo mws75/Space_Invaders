@@ -108,6 +108,25 @@ def generate_health_packs(health_packs: List[Health_Pack]) -> List[Health_Pack]:
     health_packs.append(health_pack)
     return health_packs
 
+def generate_health_pack(health_packs: List[Health_Pack], 
+                                   health_refresh_timer: Timer, 
+                                   health_pack_time_limit_timer: Timer, 
+                                   FPS: int) -> List[Health_Pack]:
+    if health_refresh_timer.time == 0:  # and Level == 2
+        health_pack_time_limit_timer.time = FPS * 3
+        health_refresh_timer.time = FPS * random.randint(5, 10)
+        
+        if len(health_packs) == 0:
+            health_packs = generate_health_packs(health_packs)
+    else:
+        health_pack_time_limit_timer.time -= 1
+        health_refresh_timer.time -= 1
+
+    if health_pack_time_limit_timer.time == 0 and len(health_packs) > 0:
+        health_packs.remove(health_packs[0])  # Assume health_pack is the first in the list
+
+    return health_packs
+
 def main(): 
     run = True
     FPS = 60 
@@ -196,20 +215,10 @@ def main():
             enemies = generate_enemies(wave_length, enemies)
 
         # generate health pack       
-        # maybe think about creating timer objects 
-        if health_refresh_timer.time == 0: # and Level == 2
-            health_pack_time_limit_timer.time = FPS * 3         
-            health_refresh_timer.time = (FPS * random.randint(5, 10))
-            
-            if len(health_packs) == 0:       
-                health_packs = generate_health_packs(health_packs)       
-        else:            
-            health_pack_time_limit_timer.time -= 1
-            health_refresh_timer.time -= 1
-
-        if health_pack_time_limit_timer.time == 0 and len(health_packs) > 0: 
-            health_packs.remove(health_pack)
-
+        health_packs = generate_health_pack(health_packs, 
+                                            health_refresh_timer, 
+                                            health_pack_time_limit_timer, 
+                                            FPS)
         for health_pack in health_packs:
             if collide(health_pack, player) and player.health < player.max_health:                
                 player.health += 10    

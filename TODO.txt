@@ -1,2 +1,14 @@
 TODO 
-- Missiles - they are invisible. 
+- Refactor main loop
+
+
+TODO Someday 
+- Metors
+- Create new game vs load game 
+- Create player inventor
+
+
+
+GAME DESIGN 
+1. Enemy mission - collect coins for each enemy defeated 
+2. Metor mission - collect objects that can be used for research to unlock new items to buy
