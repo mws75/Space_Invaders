@@ -81,9 +81,20 @@ def redraw_window(player,
         player.draw(WINDOW)
         pygame.display.update()
 
-def game_over():
-    pass
+def game_over(lives: int, player: Player, lost: bool, score_recorded: bool, lost_font: str) -> bool:
+    if lives <= 0 or player.health < 0: 
+        lost = True 
+        if score_recorded == False :
+            score_keeper = Score_Keeper()
+            score_keeper.write_to_score_card(player.score)
 
+        score_keeper = Score_Keeper()    
+        top_score = score_keeper.get_top_score()
+        lost_label = lost_font.render(f"You Lost!! Score: {player.score}.  Top Score: {top_score}", 1, (255,255,255))
+        WINDOW.blit(lost_label, (WIDTH/2 - lost_label.get_width()/2, 350))
+        pygame.display.update()
+    return lost
+        
 def main(): 
     run = True
     FPS = 60 
@@ -91,6 +102,7 @@ def main():
     lives = 5    
     top_score = 0
     score_recorded = False
+    lost = False
     
     main_font = pygame.font.SysFont("arial", 45)
     lost_font = pygame.font.SysFont("Helvetica", 35)
@@ -147,26 +159,14 @@ def main():
             Player_ship = PLAYER_SHIP
             player.ship_img = Player_ship
 
-        if lives <= 0 or player.health < 0: 
-            lost = True 
-            lost_count += 1
-            
-            if score_recorded == False :
-                score_keeper = Score_Keeper()
-                score_keeper.write_to_score_card(player.score)
-                top_score = score_keeper.get_top_score()
-                score_recorded = True
-
-            lost_label = lost_font.render(f"You Lost!! Score: {player.score}.  Top Score: {top_score}", 1, (255,255,255))
-            WINDOW.blit(lost_label, (WIDTH/2 - lost_label.get_width()/2, 350))
-            pygame.display.update()
-            
-
+        lost = game_over(lives, player, lost, score_recorded, lost_font)
         if lost: 
-            if lost_count > FPS * 3: 
+            score_recorded = True
+            lost_count += 1
+            if lost_count > FPS * 3: # sit for 3 seconds before quitting. 
                 run = False 
             else: 
-                continue
+                continue # skip the rest of the game loop
         
         # generate Enemies when all enemies are destroyed. 
         if(len(enemies) == 0): 

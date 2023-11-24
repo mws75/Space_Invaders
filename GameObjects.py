@@ -110,7 +110,7 @@ class Player(Ship):
 
     MAX_MISSILE_COUNT = 2
     
-    def __init__(self, x, y, health=100):
+    def __init__(self, x, y, health=50):
         super().__init__(x, y, health)
         self.ship_img = PLAYER_SHIP
         self.gun_type, self.cool_down, self.laser_img = self.GUN_TYPE["default"]
