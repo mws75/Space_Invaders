@@ -1,5 +1,6 @@
 TODO 
 - Refactor main loop
+- Missile Bug - Can't shoot missile and it disapears if you try if you are shooting at the same time. 
 
 
 TODO Someday 
