@@ -363,6 +363,9 @@ def main():
         
         # check for events 
         for event in pygame.event.get():
+            # quit events
+            if event.type == pygame.QUIT: 
+                run = False
             # key up events
             if event.type == pygame.KEYUP:                
                 player_velocity = 0 
@@ -379,24 +382,19 @@ def main():
                     accel_x = accel_delta
 
                 elif event.key == pygame.K_e or event.key == pygame.K_q:
-                     
+                    print("missiles shot")                    
                     if player.missile_count > 0:
                         player.shoot_missile()
+                        print("missile created")
                         player.missile_count -= 1
-
-                        if player.missile_count == 1: 
-                            Player_ship = PLAYER_SHIP_ONE_MISSILE
-                            player.ship_img = Player_ship
-                        elif player.missile_count == 0:
-                            Player_ship = PLAYER_SHIP
-                            player.ship_img = Player_ship
                         
-            # quit events
-            if event.type == pygame.QUIT: 
-                run = False
+                    if player.missile_count == 1: 
+                        Player_ship = PLAYER_SHIP_ONE_MISSILE
+                        player.ship_img = Player_ship
+                    elif player.missile_count == 0:
+                        Player_ship = PLAYER_SHIP
+                        player.ship_img = Player_ship
 
-            
-    
         keys = pygame.key.get_pressed()
         # if any movement keys get pressed we need to calculate velocity
         if keys[pygame.K_a] or keys[pygame.K_d] or keys[pygame.K_w] or keys[pygame.K_s]:
@@ -427,8 +425,11 @@ def main():
                 player.y += player_velocity
                 player.ship_img = Player_ship
         
-        if keys[pygame.K_SPACE]: # shoot 
+        if keys[pygame.K_SPACE]: # shoot             
             player.shoot()
+        
+
+
 
 
         for enemy in enemies[:]: 
@@ -470,7 +471,7 @@ def main():
                       rapid_guns, speed_boosts, missiles,
                       level, lives, main_font)
         
-        print(player.missile_count)
+        
         
         
 def main_menu(): 

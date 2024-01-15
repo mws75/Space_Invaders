@@ -93,10 +93,10 @@ class Ship:
             self.cool_down_counter = 1
     
     def shoot_missile(self):
-        if self.cool_down_counter == 0: 
-            missile = Missile(self.x, self.y)
-            self.missiles.append(missile)
-            self.cool_down_counter = 1
+        missile = Missile(self.x, self.y)
+        self.missiles.append(missile)
+        self.cool_down_counter = 1
+            
 
 
 
