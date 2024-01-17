@@ -1,32 +1,40 @@
 from re import S
 import pygame 
 import os
+import sys
+
+if getattr(sys, 'frozen', False):
+    basePath = sys._MEIPASS
+else:
+    basePath = os.path.dirname(os.path.abspath(__file__))
+
+def load_image(path):
+    return pygame.image.load(os.path.join(basePath, path))
+
+RED_SPACE_SHIP = load_image("assets/img/pixel_ship_red_small.png")
+BLUE_SPACE_SHIP = load_image("assets/img/pixel_ship_blue_small.png")
+GREEN_SPACE_SHIP = load_image("assets/img/pixel_ship_green_small.png")
+YELLOW_SPACE_SHIP = load_image("assets/img/pixel_ship_yellow.png")
+PINK_SPACE_SHIP = load_image("assets/img/pixel_ship_pink.png")
+PURPLE_SPACE_SHIP  = load_image("assets/img/pixel_ship_purple.png")
+TEAL_SPACE_SHIP = load_image("assets/img/pixel_ship_teal.png")
+ORANGE_SPACE_SHIP = load_image("assets/img/pixel_ship_orange.png")
+PLAYER_SHIP = load_image("assets/img/player_ship.png")
+PLAYER_SHIP_ONE_MISSILE = load_image("assets/img/player_ship_one_missile.png")
+PLAYER_SHIP_TWO_MISSILES = load_image("assets/img/player_ship_two_missiles.png")
+PLAYER_SHIP_RIGHT = load_image("assets/img/player_ship_right_turn.png")
+PLAYER_SHIP_LEFT = load_image("assets/img/player_ship_left_turn.png")
+MISSILE = load_image("assets/img/missile_sprite.png")
 
 
-RED_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_red_small.png"))
-BLUE_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_blue_small.png"))
-GREEN_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_green_small.png"))
-YELLOW_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_yellow.png"))
-PINK_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_pink.png"))
-PURPLE_SPACE_SHIP  = pygame.image.load(os.path.join("assets/img", "pixel_ship_purple.png"))
-TEAL_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_teal.png"))
-ORANGE_SPACE_SHIP = pygame.image.load(os.path.join("assets/img", "pixel_ship_orange.png"))
-PLAYER_SHIP = pygame.image.load(os.path.join("assets/img", "player_ship.png"))
-PLAYER_SHIP_ONE_MISSILE = pygame.image.load(os.path.join("assets/img", "player_ship_one_missile.png"))
-PLAYER_SHIP_TWO_MISSILES = pygame.image.load(os.path.join("assets/img", "player_ship_two_missiles.png"))
-PLAYER_SHIP_RIGHT = pygame.image.load(os.path.join("assets/img", "player_ship_right_turn.png"))
-PLAYER_SHIP_LEFT = pygame.image.load(os.path.join("assets/img", "player_ship_left_turn.png"))
-MISSILE = pygame.image.load(os.path.join("assets/img", "missile_sprite.png"))
+RED_LASER = load_image("assets/img/pixel_laser_red.png")
+BLUE_LASER = load_image("assets/img/pixel_laser_blue.png")
+GREEN_LASER = load_image("assets/img/pixel_laser_green.png")
+YELLOW_LASER = load_image("assets/img/pixel_laser_yellow.png")
 
-
-RED_LASER = pygame.image.load(os.path.join("assets/img", "pixel_laser_red.png"))
-BLUE_LASER = pygame.image.load(os.path.join("assets/img", "pixel_laser_blue.png"))
-GREEN_LASER = pygame.image.load(os.path.join("assets/img", "pixel_laser_green.png"))
-YELLOW_LASER = pygame.image.load(os.path.join("assets/img", "pixel_laser_yellow.png"))
-
-HEALTH_PACK = pygame.image.load(os.path.join("assets/img", "health_pack.png"))
-RAPID_FIRE_GUN = pygame.image.load(os.path.join("assets/img", "rapid_fire_gun.png"))
-SPEED_BOOST = pygame.image.load(os.path.join("assets/img", "speed_boost.png"))
+HEALTH_PACK = load_image("assets/img/health_pack.png")
+RAPID_FIRE_GUN = load_image("assets/img/rapid_fire_gun.png")
+SPEED_BOOST = load_image("assets/img/speed_boost.png")
 
 WIDTH, HEIGHT = 750, 750
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
