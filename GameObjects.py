@@ -8,7 +8,7 @@ if getattr(sys, 'frozen', False):
 else:
     basePath = os.path.dirname(os.path.abspath(__file__))
 
-def load_image(path):
+def load_image(path):    
     return pygame.image.load(os.path.join(basePath, path))
 
 RED_SPACE_SHIP = load_image("assets/img/pixel_ship_red_small.png")
