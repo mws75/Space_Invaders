@@ -302,21 +302,7 @@ def main():
                 rapid_guns.remove(rapid_gun)
 
 
-        # generate speed boost
-        # if speed_boost_refresh_time == 0: # and level = 3
-        #     speed_boost_time_limit = FPS * 3
-        #     speed_boost_refresh_time = (FPS * random.randint(10, 20))
-
-        #     if len(speed_boosts) == 0: 
-        #         speed_boost = Speed_Boost((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
-        #         speed_boosts.append(speed_boost)
-        #         special_speed_time = FPS * 10  
-        # else: 
-        #     speed_boost_refresh_time -= 1
-        #     speed_boost_time_limit -= 1
-
-        # if speed_boost_time_limit == 0 and len(speed_boosts) > 0: 
-        #     speed_boosts.remove(speed_boost)
+        # generate speed boosts
         speed_boosts = handle_speed_boosts(speed_boosts, 
                                            speed_boost_refresh_timer, 
                                            speed_boost_time_limit_timer,
@@ -395,7 +381,8 @@ def main():
                         Player_ship = PLAYER_SHIP
                         player.ship_img = Player_ship
 
-        keys = pygame.key.get_pressed()
+        # For continous events 
+        keys = pygame.key.get_pressed() 
         # if any movement keys get pressed we need to calculate velocity
         if keys[pygame.K_a] or keys[pygame.K_d] or keys[pygame.K_w] or keys[pygame.K_s]:
             

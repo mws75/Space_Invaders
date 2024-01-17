@@ -44,7 +44,7 @@ class Ship:
         self.lasers = []
         self.missiles =[] 
         self.cool_down_counter = 0
-        self.cool_down = 30
+        self.cool_down = 30 # this is about 0.5 seconds because my game runs at 60 FPS. 
 
     def draw(self, window): 
         window.blit(self.ship_img, (self.x, self.y))
@@ -97,8 +97,6 @@ class Ship:
         self.missiles.append(missile)
         self.cool_down_counter = 1
             
-
-
 
 # Player inherits from ship
 class Player(Ship):
