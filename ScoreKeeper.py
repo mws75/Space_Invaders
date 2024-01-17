@@ -1,7 +1,12 @@
 import json
 from pandas import json_normalize
+import os
+import sys
 
-json_file_path = "./assets/json/scores.json"
+def resource_path(relative_path):
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))    
+    return os.path.join(base_path, relative_path)
+json_file_path = resource_path("json/scores.json")
 
 class Score_Keeper:
     def __init__(self) -> None:

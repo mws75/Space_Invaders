@@ -1,2 +1,4 @@
 si_env/*
 .venv
+build
+dist
