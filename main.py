@@ -153,7 +153,6 @@ def handle_rapid_guns(rapid_guns: List[Rapid_Gun],
     
     return rapid_guns
 
-
 def generate_speed_boosts(speed_boosts: List[Speed_Boost]) -> List[Speed_Boost]:
     speed_boost = Speed_Boost((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
     speed_boosts.append(speed_boost)
@@ -179,13 +178,32 @@ def handle_speed_boosts(speed_boosts: List[Speed_Boost],
     return speed_boosts
 
 def generate_missiles(missiles: List[Missile]) -> List[Missile]:
-    pass
+        missile = Missile((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
+        missiles.append(missile)
+        print("missile created")
+        return missiles 
 
 def handle_missiles(missiles: List[Missile],
                     missile_refresh_timer: int,
                     missile_time_limit_timer: int,
-                    FPS: int) -> List[Missile]:
-    pass
+                    FPS: int) -> List[Missile]:        
+        if missile_refresh_timer.time == 0:
+            missile_time_limit_timer.time = FPS * 3
+            missile_refresh_timer.time = (FPS * random.randint(3,5))
+            print("missiles need to be created")
+
+            if len(missiles) == 0:
+                missiles = generate_missiles(missiles)
+
+        else:
+            missile_refresh_timer.time -= 1
+            missile_time_limit_timer.time -= 1
+        
+        if missile_time_limit_timer.time == 0 and len(missiles) > 0:
+            missiles.remove(missiles[0])
+        
+        return missiles
+        
  
         
 
@@ -241,8 +259,8 @@ def main():
     speed_boost_time_limit_timer = Timer(FPS * 3)
 
     # Missile Data 
-    missile_refresh_time = FPS * random.randint(1, 2)
-    missile_time_limit = FPS * 1
+    missile_refresh_timer = Timer(FPS * random.randint(1, 2))
+    missile_time_limit_timer = Timer(FPS * 1)
 
     # Special Weapon Data
     special_weapon_timer = Timer(FPS * 10)
@@ -320,20 +338,10 @@ def main():
                 speed_boosts.remove(speed_boost)                 
 
         # generate missile 
-        if missile_refresh_time == 0:
-            missile_time_limit = FPS * 3
-            missile_refresh_time = (FPS * random.randint(3,5))
-
-            if len(missiles) == 0:
-                missile = Missile((random.randint(WIDTH_MIN, WIDTH_MAX)), (random.randint(HEIGHT_MIN, HEIGHT_MAX)))
-                missiles.append(missile)
-        else:
-            missile_refresh_time -= 1
-            missile_time_limit -= 1
-        
-        if missile_time_limit == 0 and len(missiles) > 0:
-            missiles.remove(missile)
-        
+        missiles = handle_missiles(missiles, 
+                                   missile_refresh_timer,
+                                   missile_time_limit_timer,
+                                   FPS) 
         for missile in missiles:
             if collide(missile, player) and player.missile_count < 2:
                 player.missile_count += 1
@@ -345,8 +353,6 @@ def main():
                 Player_ship = PLAYER_SHIP_TWO_MISSILES
                 player.ship_img = Player_ship
 
-
-        
         # check for events 
         for event in pygame.event.get():
             # quit events
@@ -415,9 +421,6 @@ def main():
         if keys[pygame.K_SPACE]: # shoot             
             player.shoot()
         
-
-
-
 
         for enemy in enemies[:]: 
             enemy.move(enemy_velocity)
