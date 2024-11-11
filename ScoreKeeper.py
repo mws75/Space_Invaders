@@ -8,6 +8,7 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 json_file_path = "scores.json"
+json_file_path_v2 = "scores_v2.json"
 
 class Score_Keeper:
     def __init__(self) -> None:
